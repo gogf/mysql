@@ -81,7 +81,18 @@ func (d MySQLDriver) Open(dsn string) (driver.Conn, error) {
 }
 
 func init() {
-	sql.Register("mysql", &MySQLDriver{})
+	var (
+		name    = "mysql"
+		drivers = sql.Drivers()
+	)
+	// If the name "mysql" is already registered by another driver,
+	// it ignores current registering.
+	for _, v := range drivers {
+		if name == v {
+			return
+		}
+	}
+	sql.Register(name, &MySQLDriver{})
 }
 
 // NewConnector returns new driver.Connector.
